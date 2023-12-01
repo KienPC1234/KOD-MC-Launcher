@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using Krypton.Toolkit;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Text.Json;
 
 
@@ -50,10 +53,172 @@ namespace KOD_MC_Laucher
             dataGridView1.ReadOnly = true;
             kryptonButton2.Enabled = true;
         }
+        public class Result
+        {
+            public string name { get; set; }
+            public int id { get; set; }
+            public string url { get; set; }
+            public string authorNames { get; set; }
+            public int totaldownload { get; set; }
+        }
+
+        public async void FetchingCFAPI(string mode, int classid, string slug, string search)
+        {
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var Nodepath = Path.Combine(appDirectory, "node", "node.exe");
+            var apipath = Path.Combine(appDirectory, "cf-api");
+            if (mode == "mpfind")
+            {
+                kryptonButton4.Enabled = false;
+                // Delete files
+                File.Delete(Path.Combine(apipath, "searchinfo.json"));
+                File.Delete(Path.Combine(apipath, "simplifiedResults.json"));
+
+                // Create searchinfo.json
+                var searchInfo = new
+                {
+                    slug = slug,
+                    searchFilter = search,
+                    classid = classid
+                };
+                File.WriteAllText(Path.Combine(apipath, "searchinfo.json"), JsonSerializer.Serialize(searchInfo));
+
+                // Run node.js script
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    WorkingDirectory = apipath,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = "cmd.exe",
+                    RedirectStandardInput = true,
+                    UseShellExecute = false
+                };
+                Process process = new Process { StartInfo = startInfo };
+                process.Start();
+                using (StreamWriter writer = process.StandardInput)
+                {
+                    if (writer.BaseStream.CanWrite)
+                    {
+                        writer.WriteLine($"cd {apipath}");
+                        writer.WriteLine($@"""{Nodepath}"" search.js");
+                        writer.WriteLine("exit");
+                    }
+                }
+                process.WaitForExit();
+
+                // Process results
+                var resultsPath = Path.Combine(apipath, "simplifiedResults.json");
+                if (!File.Exists(resultsPath))
+                {
+                    MessageBox.Show("Can't Fetching API!");
+                }
+                else
+                {
+                    var results = JsonSerializer.Deserialize<List<Result>>(File.ReadAllText(resultsPath));
+                    if (results.Count == 0)
+                    {
+                        MessageBox.Show("Can't Find This Pack!");
+                    }
+                    else
+                    {
+                        foreach (var result in results)
+                        {
+                            DataGridViewRow row = new DataGridViewRow();
+                            row.Height += 6;
+                            using (var httpClient = new HttpClient())
+                            {
+                                var response = await httpClient.GetAsync(result.url);
+                                byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+                                using (var ms = new MemoryStream(imageBytes))
+                                {
+                                    Image image = Image.FromStream(ms);
+                                    Image resizedImage = image.GetThumbnailImage(32, 32, null, IntPtr.Zero);
+                                    string tempDirectory = Path.Combine(appDirectory, "Temps");
+                                    Directory.CreateDirectory(tempDirectory); // Tạo thư mục "Temps" nếu nó chưa tồn tại
+                                    string imagePath = Path.Combine(tempDirectory, $"{result.id}.png"); // Tạo đường dẫn cho hình ảnh
+                                    resizedImage.Save(imagePath, ImageFormat.Png); // Lưu hình ảnh vào đường dẫn đã tạo
+                                    var imageCell = new DataGridViewImageCell();
+                                    imageCell.Value = Image.FromFile(imagePath); // Tải hình ảnh từ đường dẫn
+                                    row.Cells.Add(imageCell);
+                                }
+                            }
+                            row.Cells.Add(new DataGridViewTextBoxCell { Value = result.name });
+                            row.Cells.Add(new DataGridViewTextBoxCell { Value = result.id.ToString() });
+                            row.Cells.Add(new DataGridViewTextBoxCell { Value = result.authorNames });
+                            row.Cells.Add(new DataGridViewTextBoxCell { Value = result.totaldownload.ToString() });
+                            dataGridView2.Rows.Add(row);
+                            kryptonButton4.Enabled = true;
+                        }
+                    }
+                }
+               
+            }
+            else if (mode == "allfile")
+            {
+                string allFileVerPath = Path.Combine(appDirectory, "cf-api\\allfilever.json");
+                string filesPath = Path.Combine(appDirectory, "cf-api\\files.json");
+                kryptonButton3.Enabled = false;
+                // Xóa file "allfilever.json" nếu tồn tại
+                if (File.Exists(allFileVerPath))
+                {
+                    File.Delete(allFileVerPath);
+                }
+
+                // Xóa file "files.json" nếu tồn tại
+                if (File.Exists(filesPath))
+                {
+                    File.Delete(filesPath);
+                }
+
+                // Tạo file "allfilever.json" với nội dung yêu cầu
+                if (dataGridView2.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Please Select Pack!");
+                }
+                else if (dataGridView2.SelectedRows.Count > 1)
+                {
+                    // Không làm gì nếu người dùng chọn nhiều hơn một hàng
+                }
+                else
+                {
+                    int modidValue = int.Parse(dataGridView2.SelectedRows[0].Cells["ID"].Value.ToString());
+                    var jsonContent = new { modid = modidValue };
+
+                    using (var streamWriter = File.CreateText(allFileVerPath))
+                    {
+                        var json = JsonSerializer.Serialize(jsonContent);
+                        streamWriter.Write(json);
+                    }
+                    ProcessStartInfo startInfo1 = new ProcessStartInfo
+                    {
+                        WorkingDirectory = apipath,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = "cmd.exe",
+                        RedirectStandardInput = true,
+                        UseShellExecute = false
+                    };
+                    Process process1 = new Process { StartInfo = startInfo1 };
+                    process1.Start();
+                    using (StreamWriter writer = process1.StandardInput)
+                    {
+                        if (writer.BaseStream.CanWrite)
+                        {
+                            writer.WriteLine($"cd {apipath}");
+                            writer.WriteLine($@"""{Nodepath}"" getfile.js");
+                            writer.WriteLine("exit");
+                        }
+                    }
+                    process1.WaitForExit();
+                    FileChoice Form = new FileChoice();
+                    Form.ShowDialog();
+                }
+            }
+        }
+
         public Add()
         {
             InitializeComponent();
             LoadDataIntoDataGridView();
+            FetchingCFAPI("mpfind", 4471, "", "");
         }
         private List<string> activeFilters = new List<string>();
         private void ApplyFilters()
@@ -196,10 +361,25 @@ namespace KOD_MC_Laucher
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Image image = Image.FromFile(openFileDialog.FileName);
-                kryptonPictureBox1.Image = image;
-                icon = image;
+                Image image2 = Image.FromFile(openFileDialog.FileName);
+                kryptonPictureBox1.Image = image2;
+                icon = image2;
             }
+        }
+
+        private void kryptonButton4_Click(object sender, EventArgs e)
+        {
+            dataGridView2.Rows.Clear();
+            kryptonButton4.Enabled = false;
+            FetchingCFAPI("mpfind", 4471, kryptonTextBox3.Text, kryptonTextBox2.Text);
+            kryptonButton4.Enabled = true;
+        }
+
+        private void kryptonButton3_Click(object sender, EventArgs e)
+        {
+            
+            FetchingCFAPI("allfile", 4471, "", "");
+            this.Close();
         }
     }
 }

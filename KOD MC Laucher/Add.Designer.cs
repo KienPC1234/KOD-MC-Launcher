@@ -53,6 +53,11 @@
             kryptonLabel4 = new Krypton.Toolkit.KryptonLabel();
             kryptonLabel3 = new Krypton.Toolkit.KryptonLabel();
             dataGridView2 = new DataGridView();
+            image1 = new DataGridViewImageColumn();
+            name1 = new DataGridViewTextBoxColumn();
+            ID = new DataGridViewTextBoxColumn();
+            AuthorName = new DataGridViewTextBoxColumn();
+            totaldownload = new DataGridViewTextBoxColumn();
             kryptonTextBox3 = new Krypton.Toolkit.KryptonTextBox();
             kryptonTextBox2 = new Krypton.Toolkit.KryptonTextBox();
             kryptonButton3 = new Krypton.Toolkit.KryptonButton();
@@ -292,15 +297,16 @@
             // 
             // kryptonButton4
             // 
-            kryptonButton4.Location = new Point(615, 86);
+            kryptonButton4.Location = new Point(659, 143);
             kryptonButton4.Name = "kryptonButton4";
-            kryptonButton4.Size = new Size(164, 33);
+            kryptonButton4.Size = new Size(99, 29);
             kryptonButton4.TabIndex = 10;
-            kryptonButton4.Values.Text = "kryptonButton4";
+            kryptonButton4.Values.Text = "Search!";
+            kryptonButton4.Click += kryptonButton4_Click;
             // 
             // kryptonLabel4
             // 
-            kryptonLabel4.Location = new Point(123, 313);
+            kryptonLabel4.Location = new Point(638, 75);
             kryptonLabel4.Name = "kryptonLabel4";
             kryptonLabel4.Size = new Size(151, 20);
             kryptonLabel4.TabIndex = 9;
@@ -308,7 +314,7 @@
             // 
             // kryptonLabel3
             // 
-            kryptonLabel3.Location = new Point(624, 32);
+            kryptonLabel3.Location = new Point(638, 49);
             kryptonLabel3.Name = "kryptonLabel3";
             kryptonLabel3.Size = new Size(49, 20);
             kryptonLabel3.TabIndex = 8;
@@ -316,36 +322,77 @@
             // 
             // dataGridView2
             // 
+            dataGridView2.AllowUserToAddRows = false;
+            dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.BackgroundColor = SystemColors.ButtonFace;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { image1, name1, ID, AuthorName, totaldownload });
             dataGridView2.Location = new Point(15, 20);
             dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(579, 287);
+            dataGridView2.Size = new Size(603, 287);
             dataGridView2.TabIndex = 6;
+            // 
+            // image1
+            // 
+            image1.HeaderText = "Image";
+            image1.Name = "image1";
+            image1.ReadOnly = true;
+            image1.Width = 50;
+            // 
+            // name1
+            // 
+            name1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            name1.HeaderText = "Name";
+            name1.Name = "name1";
+            name1.ReadOnly = true;
+            name1.Resizable = DataGridViewTriState.True;
+            name1.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
+            // ID
+            // 
+            ID.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ID.HeaderText = "ID";
+            ID.Name = "ID";
+            ID.ReadOnly = true;
+            // 
+            // AuthorName
+            // 
+            AuthorName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            AuthorName.HeaderText = "Author Name";
+            AuthorName.Name = "AuthorName";
+            AuthorName.ReadOnly = true;
+            // 
+            // totaldownload
+            // 
+            totaldownload.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            totaldownload.HeaderText = "Total Downloads";
+            totaldownload.Name = "totaldownload";
+            totaldownload.ReadOnly = true;
             // 
             // kryptonTextBox3
             // 
-            kryptonTextBox3.Location = new Point(280, 310);
+            kryptonTextBox3.Location = new Point(638, 101);
             kryptonTextBox3.Name = "kryptonTextBox3";
-            kryptonTextBox3.Size = new Size(107, 23);
+            kryptonTextBox3.Size = new Size(151, 23);
             kryptonTextBox3.TabIndex = 5;
-            kryptonTextBox3.Text = "kryptonTextBox3";
             // 
             // kryptonTextBox2
             // 
-            kryptonTextBox2.Location = new Point(679, 29);
+            kryptonTextBox2.Location = new Point(693, 46);
             kryptonTextBox2.Name = "kryptonTextBox2";
-            kryptonTextBox2.Size = new Size(100, 23);
+            kryptonTextBox2.Size = new Size(96, 23);
             kryptonTextBox2.TabIndex = 4;
-            kryptonTextBox2.Text = "kryptonTextBox2";
             // 
             // kryptonButton3
             // 
-            kryptonButton3.Location = new Point(616, 258);
+            kryptonButton3.Location = new Point(659, 196);
             kryptonButton3.Name = "kryptonButton3";
-            kryptonButton3.Size = new Size(163, 33);
+            kryptonButton3.Size = new Size(99, 33);
             kryptonButton3.TabIndex = 0;
-            kryptonButton3.Values.Text = "kryptonButton3";
+            kryptonButton3.Values.Text = "Install Pack!";
+            kryptonButton3.Click += kryptonButton3_Click;
             // 
             // tabPage9
             // 
@@ -473,5 +520,10 @@
         private Krypton.Toolkit.KryptonTextBox kryptonTextBox3;
         private Krypton.Toolkit.KryptonTextBox kryptonTextBox2;
         private Krypton.Toolkit.KryptonButton kryptonButton4;
+        private DataGridViewImageColumn image1;
+        private DataGridViewTextBoxColumn name1;
+        private DataGridViewTextBoxColumn ID;
+        private DataGridViewTextBoxColumn AuthorName;
+        private DataGridViewTextBoxColumn totaldownload;
     }
 }
