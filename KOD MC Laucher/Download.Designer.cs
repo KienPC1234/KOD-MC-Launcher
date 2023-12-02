@@ -28,18 +28,46 @@
         /// </summary>
         private void InitializeComponent()
         {
+            kryptonProgressBar1 = new Krypton.Toolkit.KryptonProgressBar();
+            kryptonLabel1 = new Krypton.Toolkit.KryptonLabel();
             SuspendLayout();
+            // 
+            // kryptonProgressBar1
+            // 
+            kryptonProgressBar1.Location = new Point(77, 130);
+            kryptonProgressBar1.Name = "kryptonProgressBar1";
+            kryptonProgressBar1.Size = new Size(100, 26);
+            kryptonProgressBar1.StateCommon.Back.Color1 = Color.Green;
+            kryptonProgressBar1.StateDisabled.Back.ColorStyle = Krypton.Toolkit.PaletteColorStyle.OneNote;
+            kryptonProgressBar1.StateNormal.Back.ColorStyle = Krypton.Toolkit.PaletteColorStyle.OneNote;
+            kryptonProgressBar1.TabIndex = 0;
+            kryptonProgressBar1.Text = "kryptonProgressBar1";
+            kryptonProgressBar1.Values.Text = "kryptonProgressBar1";
+            // 
+            // kryptonLabel1
+            // 
+            kryptonLabel1.Location = new Point(174, 42);
+            kryptonLabel1.Name = "kryptonLabel1";
+            kryptonLabel1.Size = new Size(88, 20);
+            kryptonLabel1.TabIndex = 1;
+            kryptonLabel1.Values.Text = "kryptonLabel1";
             // 
             // Download
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(468, 225);
+            ClientSize = new Size(468, 206);
+            Controls.Add(kryptonLabel1);
+            Controls.Add(kryptonProgressBar1);
             Name = "Download";
             Text = "Download";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Krypton.Toolkit.KryptonProgressBar kryptonProgressBar1;
+        private Krypton.Toolkit.KryptonLabel kryptonLabel1;
     }
 }

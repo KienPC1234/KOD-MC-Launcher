@@ -331,7 +331,7 @@
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(603, 287);
+            dataGridView2.Size = new Size(603, 306);
             dataGridView2.TabIndex = 6;
             // 
             // image1

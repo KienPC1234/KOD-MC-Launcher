@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
+﻿
 namespace KOD_MC_Laucher
 {
     public partial class Load : Form
@@ -21,6 +12,7 @@ namespace KOD_MC_Laucher
             Directory.CreateDirectory(AppDictory + "\\Modpacks");
             Directory.CreateDirectory(AppDictory + "\\Data");
             Directory.CreateDirectory(AppDictory + "\\Temps");
+            Directory.CreateDirectory(AppDictory + "\\Packprs");
             YourMethod();
         }
         private void YourMethod()

@@ -1,7 +1,8 @@
-﻿using Krypton.Toolkit;
+﻿using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Security.Policy;
 using System.Text.Json;
 
 
@@ -87,10 +88,10 @@ namespace KOD_MC_Laucher
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     WorkingDirectory = apipath,
-                    WindowStyle = ProcessWindowStyle.Hidden,
                     FileName = "cmd.exe",
                     RedirectStandardInput = true,
-                    UseShellExecute = false
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
                 };
                 Process process = new Process { StartInfo = startInfo };
                 process.Start();
@@ -150,7 +151,7 @@ namespace KOD_MC_Laucher
                         }
                     }
                 }
-               
+
             }
             else if (mode == "allfile")
             {
@@ -168,7 +169,6 @@ namespace KOD_MC_Laucher
                 {
                     File.Delete(filesPath);
                 }
-
                 // Tạo file "allfilever.json" với nội dung yêu cầu
                 if (dataGridView2.SelectedRows.Count == 0)
                 {
@@ -191,10 +191,10 @@ namespace KOD_MC_Laucher
                     ProcessStartInfo startInfo1 = new ProcessStartInfo
                     {
                         WorkingDirectory = apipath,
-                        WindowStyle = ProcessWindowStyle.Hidden,
                         FileName = "cmd.exe",
                         RedirectStandardInput = true,
-                        UseShellExecute = false
+                        UseShellExecute = false,
+                        CreateNoWindow = true
                     };
                     Process process1 = new Process { StartInfo = startInfo1 };
                     process1.Start();
@@ -208,6 +208,28 @@ namespace KOD_MC_Laucher
                         }
                     }
                     process1.WaitForExit();
+                    string prsPath = Path.Combine(appDirectory, "Packprs");
+
+                    // Tạo một đối tượng JSON với modid: modidvar
+                    var buildInfo = new JObject();
+                    buildInfo["modid"] = modidValue;
+
+                    // Ghi đối tượng JSON vào một tệp tin mới tên là buildinfo.json
+                    File.WriteAllText(Path.Combine(prsPath, "buildinfo.json"), buildInfo.ToString());
+
+                    // Lấy hình ảnh từ cell "image1" ở row đang chọn trong dataGridView2
+                    var selectedRow = dataGridView2.CurrentRow;
+                    if (selectedRow != null)
+                    {
+                        var imageCell = selectedRow.Cells["image1"];
+                        if (imageCell != null)
+                        {
+                            var image = (Image)imageCell.Value;
+                            // Lưu hình ảnh vào prsPath với tên packicon.png
+                            image.Save(Path.Combine(prsPath, "packicon.png"), System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                    }
+
                     FileChoice Form = new FileChoice();
                     Form.ShowDialog();
                 }
@@ -377,8 +399,8 @@ namespace KOD_MC_Laucher
 
         private void kryptonButton3_Click(object sender, EventArgs e)
         {
-            
-            FetchingCFAPI("allfile", 4471, "", "");
+
+            FetchingCFAPI("allfile", 4471, "", ""); 
             this.Close();
         }
     }
